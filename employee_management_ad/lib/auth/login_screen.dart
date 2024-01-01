@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     };
 
     var request = http.Request(
-        'POST', Uri.parse('http://192.168.29.77:2000/app/admin/login'));
+        'POST', Uri.parse('http://192.168.29.135:2000/app/admin/login'));
     request.body = json.encode({
       "Email": _emailController.text,
       "Password": _passwordController.text,

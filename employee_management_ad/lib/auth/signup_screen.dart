@@ -26,7 +26,7 @@ class _SignupScreenState extends State<SignupScreen> {
     final String password = passwordController.text;
 
     // Replace the following placeholder code with your actual server endpoint and logic
-    final String serverUrl = 'http://192.168.29.77:2000/app/admin/addAdmin';
+    final String serverUrl = 'http://192.168.29.135:2000/app/admin/addAdmin';
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
       // 'Authorization':

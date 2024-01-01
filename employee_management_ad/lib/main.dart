@@ -1,10 +1,19 @@
 import 'package:employee_management_ad/auth/login_screen.dart';
 import 'package:employee_management_ad/auth/signup_screen.dart';
+import 'package:employee_management_ad/provider/userProvider.dart';
 import 'package:employee_management_ad/screen/home.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
-  runApp(const MyApp());
+   runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

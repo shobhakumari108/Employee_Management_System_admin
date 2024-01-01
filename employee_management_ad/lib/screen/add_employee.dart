@@ -71,7 +71,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                 ),
                 SizedBox(height: 40),
                 SizedBox(
-                    width: size.width,
+                    width: size.width/3,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () async {

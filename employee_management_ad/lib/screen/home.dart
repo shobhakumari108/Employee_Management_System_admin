@@ -20,9 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
     SettingsContent(),
     ProfileScreen(),
     AddEmployeeScreen(),
-    // EditEmployeeScreen(
-
-    // ),
+    EmployeeEditScreen(employee: UserData(),
+  
+    ),
     EmployeeScreen(),
     EmployeeProfileScreen(
       employee: UserData(),

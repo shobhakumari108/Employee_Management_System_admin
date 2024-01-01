@@ -99,12 +99,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.only(right: 100, left: 20, top: 20),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 10,
-                ),
+                // SizedBox(
+                //   height: 20,
+                // ),
                 Container(
                   width: size.width,
                   child: TextField(
@@ -132,18 +133,21 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           ),
                         );
                       },
-                      child: Card(
-                        elevation: 5,
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            radius: 30,
-                            backgroundImage:
-                                NetworkImage(employee.profilePhoto ?? ''),
+                      child: SizedBox(
+                        width: size.width,
+                        child: Card(
+                          elevation: 5,
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              // radius: 30,
+                              backgroundImage:
+                                  NetworkImage(employee.profilePhoto ?? ''),
+                            ),
+                            title: Text(
+                                '${employee.firstName ?? ""} ${employee.lastName ?? ""}'),
+                            subtitle: Text('Email: ${employee.email ?? ""}'),
                           ),
-                          title: Text(
-                              '${employee.firstName ?? ""} ${employee.lastName ?? ""}'),
-                          subtitle: Text('Email: ${employee.email ?? ""}'),
                         ),
                       ),
                     );
