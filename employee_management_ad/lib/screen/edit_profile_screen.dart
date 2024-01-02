@@ -18,17 +18,16 @@ import 'package:provider/provider.dart';
 class EmployeeEditScreen extends StatefulWidget {
   final UserData employee;
 
-  const EmployeeEditScreen({Key? key, required this.employee,})
-      : super(key: key);
+  const EmployeeEditScreen({
+    Key? key,
+    required this.employee,
+  }) : super(key: key);
 
   @override
   _EmployeeEditScreenState createState() => _EmployeeEditScreenState();
 }
 
-
-
 class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
- 
 //  late UserData userData;
 
 //   @override
@@ -37,9 +36,8 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
 
 //     userData = Provider.of<UserProvider>(context).userInformation;
 //   }
- 
- 
- 
+
+  bool _isUpdating = false;
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
@@ -84,6 +82,9 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
   }
 
   Future<void> _updateEmployeeProfile() async {
+    setState(() {
+      _isUpdating = true; // Set _isUpdating to true when starting the update
+    });
     // Create an Employee object with updated values
     UserData updatedEmployee = UserData(
       sId: widget.employee.sId,
@@ -107,6 +108,10 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
         "====================================================${updatedEmployee}");
     // Call the service to update the employee
     bool success = await EmployeeService.updateEmployee(updatedEmployee);
+    setState(() {
+      _isUpdating =
+          false; // Set _isUpdating to false when the update is complete
+    });
 
     if (success) {
       // Show a toast and return the updated employee data
@@ -175,476 +180,485 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: buildAppBar(context, "Edit Employee"),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 100),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Photo selection
-                SizedBox(
-                  height: 40,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            ListTile(
-                              leading: const Icon(Icons.camera),
-                              title: const Text('Take a photo'),
-                              onTap: () {
-                                Navigator.pop(context);
-                                _pickImage(ImageSource.camera);
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.photo),
-                              title: const Text('Choose from gallery'),
-                              onTap: () {
-                                Navigator.pop(context);
-                                _pickImage(ImageSource.gallery);
-                              },
-                            ),
-                            if (_selectedPhoto != null &&
-                                _selectedPhoto!.isNotEmpty)
+    return Padding(
+      padding: const EdgeInsets.all(30),
+      child: Card(
+        child: Scaffold(
+          // appBar: buildAppBar(context, "Edit Employee"),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 100),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Photo selection
+                  SizedBox(
+                    height: 40,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
                               ListTile(
-                                leading: const Icon(Icons.delete),
-                                title: const Text('Remove photo'),
+                                leading: const Icon(Icons.camera),
+                                title: const Text('Take a photo'),
                                 onTap: () {
                                   Navigator.pop(context);
-                                  setState(() {
-                                    _selectedPhoto = null;
-                                  });
+                                  _pickImage(ImageSource.camera);
                                 },
                               ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(60),
-                          image: _selectedPhoto != null &&
-                                  _selectedPhoto!.isNotEmpty
-                              ? DecorationImage(
-                                  image: FileImage(File(_selectedPhoto!)),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
-                        child: _selectedPhoto == null || _selectedPhoto!.isEmpty
-                            ? Center(
-                                child: Icon(
-                                  Icons.add_a_photo,
-                                  size: 40,
-                                  color: Colors.grey[600],
+                              ListTile(
+                                leading: const Icon(Icons.photo),
+                                title: const Text('Choose from gallery'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _pickImage(ImageSource.gallery);
+                                },
+                              ),
+                              if (_selectedPhoto != null &&
+                                  _selectedPhoto!.isNotEmpty)
+                                ListTile(
+                                  leading: const Icon(Icons.delete),
+                                  title: const Text('Remove photo'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      _selectedPhoto = null;
+                                    });
+                                  },
                                 ),
-                              )
-                            : null,
-                      ),
-                    ],
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(60),
+                            image: _selectedPhoto != null &&
+                                    _selectedPhoto!.isNotEmpty
+                                ? DecorationImage(
+                                    image: FileImage(File(_selectedPhoto!)),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
+                          ),
+                          child:
+                              _selectedPhoto == null || _selectedPhoto!.isEmpty
+                                  ? Center(
+                                      child: Icon(
+                                        Icons.add_a_photo,
+                                        size: 40,
+                                        color: Colors.grey[600],
+                                      ),
+                                    )
+                                  : null,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 40),
-                // Other text fields
+                  const SizedBox(height: 40),
+                  // Other text fields
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "First name",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildTextFieldWithIcon(
-                            controller: _firstNameController,
-                            hintText: 'First name',
-                            icon: Icons.person,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Last Name",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildTextFieldWithIcon(
-                            controller: _lastNameController,
-                            hintText: 'Last name',
-                            icon: Icons.person,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                // const SizedBox(height: 20),
-
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Email",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildTextFieldWithIcon(
-                            controller: _emailController,
-                            hintText: 'Email',
-                            icon: Icons.email,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Phone number",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildTextFieldWithIcon(
-                            controller: _phoneController,
-                            hintText: 'Phone number',
-                            icon: Icons.phone,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Job type",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildTextFieldWithIcon(
-                            controller: _jobTypeController,
-                            hintText: 'job type',
-                            icon: Icons.work,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Company name",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildTextFieldWithIcon(
-                            controller: _companyNameController,
-                            hintText: ' Company name',
-                            icon: Icons.work,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                //===========================
-                const SizedBox(
-                  height: 20,
-                ),
-
-                const Text(
-                  "Address",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                buildTextFieldWithIcon(
-                  controller: _addressController,
-                  hintText: 'Address',
-                  icon: Icons.work,
-                ),
-
-                const SizedBox(height: 20),
-                const Text(
-                  "Department",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                buildTextFieldWithIcon(
-                  controller: _departmentController,
-                  hintText: 'Department',
-                  icon: Icons.work,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Education",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                buildTextFieldWithIcon(
-                  controller: _educationController,
-                  hintText: 'Education',
-                  icon: Icons.work,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Employment status",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                buildTextFieldWithIcon(
-                  controller: _employmentStatusController,
-                  hintText: 'Employment status',
-                  icon: Icons.work,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Work schedule",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                buildTextFieldWithIcon(
-                  controller: _workScheduleController,
-                  hintText: 'Work schedule',
-                  icon: Icons.work,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Company employment id",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildTextFieldWithIcon(
-                            controller: _companyEmployeeIDController,
-                            hintText: 'Company employment id',
-                            icon: Icons.work,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Manager id",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          buildTextFieldWithIcon(
-                            controller: _managerIDController,
-                            hintText: 'Manager id',
-                            icon: Icons.work,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                //========================
-
-                const SizedBox(height: 20),
-                const Text(
-                  "Joining date",
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 50,
-                  color: Color.fromARGB(255, 240, 239, 239),
-                  child: Row(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: TextFormField(
-                          controller: _joiningDateController,
-                          decoration: InputDecoration(
-                            border: InputBorder.none, // Remove the border line
-                            focusedBorder:
-                                InputBorder.none, // Remove the focused border
-                            enabledBorder:
-                                InputBorder.none, // Remove the enabled border
-                            errorBorder:
-                                InputBorder.none, // Remove the error border
-                            disabledBorder: InputBorder.none,
-                            hintText: 'Joining date',
-                            prefixIcon: IconButton(
-                              icon: const Icon(Icons.date_range),
-                              onPressed: _selectDate,
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "First name",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            // border: OutlineInputBorder(),
-                          ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildTextFieldWithIcon(
+                              controller: _firstNameController,
+                              hintText: 'First name',
+                              icon: Icons.person,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Last Name",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildTextFieldWithIcon(
+                              controller: _lastNameController,
+                              hintText: 'Last name',
+                              icon: Icons.person,
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 40),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: size.width / 3,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _updateEmployeeProfile,
-                        style: ElevatedButton.styleFrom(
-                            primary: const Color.fromARGB(255, 61, 124, 251)),
-                        child: const Text(
-                          'Save',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                  // const SizedBox(height: 20),
+
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Email",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildTextFieldWithIcon(
+                              controller: _emailController,
+                              hintText: 'Email',
+                              icon: Icons.email,
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Phone number",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildTextFieldWithIcon(
+                              controller: _phoneController,
+                              hintText: 'Phone number',
+                              icon: Icons.phone,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Job type",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildTextFieldWithIcon(
+                              controller: _jobTypeController,
+                              hintText: 'job type',
+                              icon: Icons.work,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Company name",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildTextFieldWithIcon(
+                              controller: _companyNameController,
+                              hintText: ' Company name',
+                              icon: Icons.work,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  //===========================
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  const Text(
+                    "Address",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  buildTextFieldWithIcon(
+                    controller: _addressController,
+                    hintText: 'Address',
+                    icon: Icons.work,
+                  ),
+
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Department",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  buildTextFieldWithIcon(
+                    controller: _departmentController,
+                    hintText: 'Department',
+                    icon: Icons.work,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    "Education",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  buildTextFieldWithIcon(
+                    controller: _educationController,
+                    hintText: 'Education',
+                    icon: Icons.work,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    "Employment status",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  buildTextFieldWithIcon(
+                    controller: _employmentStatusController,
+                    hintText: 'Employment status',
+                    icon: Icons.work,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    "Work schedule",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  buildTextFieldWithIcon(
+                    controller: _workScheduleController,
+                    hintText: 'Work schedule',
+                    icon: Icons.work,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Company employment id",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildTextFieldWithIcon(
+                              controller: _companyEmployeeIDController,
+                              hintText: 'Company employment id',
+                              icon: Icons.work,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Manager id",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            buildTextFieldWithIcon(
+                              controller: _managerIDController,
+                              hintText: 'Manager id',
+                              icon: Icons.work,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  //========================
+
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Joining date",
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 50,
+                    color: Color.fromARGB(255, 240, 239, 239),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _joiningDateController,
+                            decoration: InputDecoration(
+                              border:
+                                  InputBorder.none, // Remove the border line
+                              focusedBorder:
+                                  InputBorder.none, // Remove the focused border
+                              enabledBorder:
+                                  InputBorder.none, // Remove the enabled border
+                              errorBorder:
+                                  InputBorder.none, // Remove the error border
+                              disabledBorder: InputBorder.none,
+                              hintText: 'Joining date',
+                              prefixIcon: IconButton(
+                                icon: const Icon(Icons.date_range),
+                                onPressed: _selectDate,
+                              ),
+                              // border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 40),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SizedBox(
+                        width: size.width / 3,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed:
+                              _isUpdating ? null : _updateEmployeeProfile,
+                          style: ElevatedButton.styleFrom(
+                            primary: const Color.fromARGB(255, 61, 124, 251),
+                          ),
+                          child: _isUpdating
+                              ? CircularProgressIndicator() // Show loading indicator
+                              : Text(
+                                  'Save',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

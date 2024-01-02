@@ -44,7 +44,6 @@ class EmployeeService {
 
   //--------------------------------------------
 
-
 //   //======================================
 
   static const String getEmployeeUrl =
@@ -103,8 +102,9 @@ class EmployeeService {
         ..fields['EmploymentStatus'] = employee.employmentStatus ?? ''
         ..fields['WorkSedule'] = employee.workSchedule ?? '';
       // ..fields['joiningDate'] = employee.joiningDate ?? '';
-print("++++++++++++++++++++++++++++++++++++++++");
-print("1${employee.firstName},2${employee.lastName},3${employee.email},4${employee.mobileNumber},5${employee.jobTitle},8${employee.companyName},9${employee.address},10${employee.department},11${employee.education},12${employee.employmentStatus},13${employee.workSchedule}");
+      print("++++++++++++++++++++++++++++++++++++++++");
+      print(
+          "1${employee.firstName},2${employee.lastName},3${employee.email},4${employee.mobileNumber},5${employee.jobTitle},8${employee.companyName},9${employee.address},10${employee.department},11${employee.education},12${employee.employmentStatus},13${employee.workSchedule}");
       if (employee.profilePhoto != null && employee.profilePhoto!.isNotEmpty) {
         var file = File(employee.profilePhoto!);
         var stream = http.ByteStream(file.openRead());

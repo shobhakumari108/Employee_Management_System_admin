@@ -20,7 +20,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: buildAppBar(context, "Edit Employee"),
+      // appBar: buildAppBar(context, "Edit Employee"),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(

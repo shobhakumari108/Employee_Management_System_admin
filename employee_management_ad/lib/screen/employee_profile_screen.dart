@@ -2,19 +2,30 @@ import 'package:employee_management_ad/model/userdata.dart';
 import 'package:employee_management_ad/screen/edit_profile_screen.dart';
 import 'package:employee_management_ad/screen/employee_list.dart';
 import 'package:employee_management_ad/screen/home.dart';
+import 'package:employee_management_ad/screen/task_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
-class EmployeeProfileScreen extends StatelessWidget {
+class EmployeeProfileScreen extends StatefulWidget {
   final UserData employee;
 
-  const EmployeeProfileScreen({Key? key, required this.employee})
-      : super(key: key);
+  const EmployeeProfileScreen({super.key, required this.employee});
+
+  @override
+  State<EmployeeProfileScreen> createState() => _EmployeeProfileScreenState();
+}
+
+class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
+  bool _isLoading = false;
 
   Future<void> _deleteProfile(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final url =
-        'http://192.168.29.135:2000/app/users/deleteUser/${employee.sId}';
+        'http://192.168.29.135:2000/app/users/deleteUser/${widget.employee.sId}';
 
     try {
       final response = await http.delete(Uri.parse(url));
@@ -36,6 +47,10 @@ class EmployeeProfileScreen extends StatelessWidget {
     } catch (error) {
       print('Error deleting profile: $error');
       Fluttertoast.showToast(msg: 'Error deleting profile');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -67,195 +82,167 @@ class EmployeeProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(context, "Profile Screen"),
-      // appBar: AppBar(
-      //   title: Text('Employee Profile'),
-      //   leading: IconButton(
-      //     icon: const Icon(
-      //       Icons.arrow_back,
-      //     ),
-      //     onPressed: () {
-      //       //   Navigator.pushAndRemoveUntil(
-      //       //     context,
-      //       //     MaterialPageRoute(
-      //       //       builder: (context) => EmployeeScreen(),
-      //       //     ),
-      //       //     (route) => false,
-      //       //   );
-      //     },
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       icon: const CircleAvatar(
-      //         // backgroundColor: const Color.fromARGB(100, 240, 202, 89),
-      //         child: Icon(
-      //           Icons.edit,
-      //           color: Color.fromARGB(255, 121, 91, 3),
-      //         ),
-      //       ),
-      //       onPressed: () {
-      //         // Navigator.push(
-      //         //   context,
-      //         //   MaterialPageRoute(
-      //         //     builder: (context) => EmployeeEditScreen(employee: employee),
-      //         //   ),
-      //         // );
-      //       },
-      //     ),
-      //     IconButton(
-      //       icon: const CircleAvatar(
-      //         // backgroundColor:const Color.fromARGB(100, 240, 202, 89) ,
-      //         child: Icon(
-      //           Icons.delete,
-      //           color: Color.fromARGB(255, 121, 91, 3),
-      //         ),
-      //       ),
-      //       onPressed: () {
-      //         _showDeleteConfirmation(context);
-      //       },
-      //     ),
-      //   ],
-      // ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 7,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 250,
-                      width: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(
-                            10), // Optional: Add border radius for rounded corners
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            10), // Optional: Add border radius for rounded corners
-                        child: Image.network(
-                          employee.profilePhoto ?? '',
-                          width: 250,
-                          height: 250,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Column(
+    return Padding(
+      padding: const EdgeInsets.all(30),
+      child: Card(
+        child: Scaffold(
+          // appBar: buildAppBar(context, "Profile Screen"),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 7,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Contact information",
-                          style: TextStyle(fontSize: 20),
+                        Container(
+                          height: 250,
+                          width: 250,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              widget.employee.profilePhoto ?? '',
+                              width: 250,
+                              height: 250,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                         SizedBox(
-                          height: 10,
+                          width: 20,
                         ),
-                        Text('Email : ${employee.email}'),
-                        Text('Phone number : ${employee.mobileNumber}'),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "General information",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Name : ${employee.firstName} ${employee.lastName}',
-                        ),
-                        Text('Job title : ${employee.jobTitle}'),
-                        Text('Joining date : ${employee.education}'),
-                        Text(
-                          'Company name : ${employee.companyName}',
-                        ),
-                        Text("Employee id : ${employee.companyEmployeeID}"),
-                        Text("Department : ${employee.department}"),
-                        Text(
-                            "Employment status : ${employee.employmentStatus}"),
-                        Text("Maneger id : ${employee.managerID}"),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Additional information",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text("Address : ${employee.address}"),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Contact information",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text('Email : ${widget.employee.email}'),
+                            Text(
+                                'Phone number : ${widget.employee.mobileNumber}'),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "General information",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Name : ${widget.employee.firstName} ${widget.employee.lastName}',
+                            ),
+                            Text('Job title : ${widget.employee.jobTitle}'),
+                            Text('Joining date : ${widget.employee.education}'),
+                            Text(
+                              'Company name : ${widget.employee.companyName}',
+                            ),
+                            Text(
+                                "Employee id : ${widget.employee.companyEmployeeID}"),
+                            Text("Department : ${widget.employee.department}"),
+                            Text(
+                                "Employment status : ${widget.employee.employmentStatus}"),
+                            Text("Maneger id : ${widget.employee.managerID}"),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Additional information",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("Address : ${widget.employee.address}"),
+                          ],
+                        )
                       ],
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 20,
                     ),
-                    Container(
-                      // Other container properties...
-
-                      // Popup menu button
-                      child: PopupMenuButton<String>(
-                        onSelected: (value) {
-                          // Handle the selected option
-                          if (value == 'edit') {
-                            // Perform edit action
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EmployeeEditScreen(employee: employee),
-                              ),
-                            );
-                          } else if (value == 'delete') {
-                            // Perform delete action
-                            _showDeleteConfirmation(context);
-                          }
-                        },
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            PopupMenuItem<String>(
-                              value: 'edit',
-                              child: ListTile(
-                                leading: Icon(Icons.edit),
-                                title: Text('Edit'),
-                              ),
-                            ),
-                            PopupMenuItem<String>(
-                              value: 'delete',
-                              child: ListTile(
-                                leading: Icon(Icons.delete),
-                                title: Text('Delete'),
-                              ),
-                            ),
-                          ];
-                        },
-                      ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          child: _isLoading
+                              ? CircularProgressIndicator()
+                              : PopupMenuButton<String>(
+                                  onSelected: (value) {
+                                    if (value == 'edit') {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              EmployeeEditScreen(
+                                                  employee: widget.employee),
+                                        ),
+                                      );
+                                    } else if (value == 'delete') {
+                                      _showDeleteConfirmation(context);
+                                    } else if (value == 'task') {
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => TaskScreen(
+                                      //         employee: widget.employee),
+                                      //   ),
+                                      // );
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) {
+                                    return [
+                                      PopupMenuItem<String>(
+                                        value: 'edit',
+                                        child: ListTile(
+                                          // leading: Icon(Icons.edit),
+                                          title: Text('Edit'),
+                                        ),
+                                      ),
+                                      PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: ListTile(
+                                          // leading: Icon(Icons.delete),
+                                          title: Text(
+                                            'Delete',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ),
+                                      PopupMenuItem<String>(
+                                        value: 'task',
+                                        child: ListTile(
+                                          // leading: Icon(Icons.delete),
+                                          title: Text('task'),
+                                        ),
+                                      ),
+                                    ];
+                                  },
+                                ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

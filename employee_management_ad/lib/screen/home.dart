@@ -20,9 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
     SettingsContent(),
     ProfileScreen(),
     AddEmployeeScreen(),
-    EmployeeEditScreen(employee: UserData(),
-  
-    ),
+    // EmployeeEditScreen(
+    //   employee: UserData(),
+    // ),
     EmployeeScreen(),
     EmployeeProfileScreen(
       employee: UserData(),
@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(
     BuildContext context,
   ) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       // appBar: AppBar(
       //   backgroundColor: Color.fromARGB(255, 61, 124, 251),
@@ -97,153 +98,200 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(30.0),
         child: Card(
-          child: Row(
-            children: [
-              Visibility(
-                visible: _isSidebarVisible,
-                child: Expanded(
-                  flex: 2,
-                  child: Material(
-                    // elevation: 10,
-                    child: Container(
-                      child: ListView(
-                        children: [
-                          ListTile(
-                            title: Text("Home"),
-                            leading: Icon(Icons.home),
-                            selected: _currentIndex == 0,
-                            tileColor: _currentIndex == 0
-                                ? Color.fromARGB(255, 61, 124, 251)
-                                : null,
-                            onTap: () {
-                              _navigateToPage(0);
-                            },
+          elevation: 5,
+          child: SizedBox(
+            height: size.height,
+            child: Row(
+              children: [
+                Visibility(
+                  visible: _isSidebarVisible,
+                  child: SizedBox(
+                    width: size.width * .3,
+                    height: size.height,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text("Home"),
+                          leading: Icon(Icons.home),
+                          selected: _currentIndex == 0,
+                          tileColor: _currentIndex == 0
+                              ? Color.fromARGB(255, 61, 124, 251)
+                              : null,
+                          onTap: () {
+                            _navigateToPage(0);
+                          },
+                        ),
+                        ListTile(
+                          title: Text("Settings"),
+                          leading: Icon(Icons.settings),
+                          selected: _currentIndex == 1,
+                          tileColor: _currentIndex == 1
+                              ? Color.fromARGB(255, 61, 124, 251)
+                              : null,
+                          onTap: () {
+                            _navigateToPage(1);
+                          },
+                        ),
+                        ListTile(
+                          title: Text("Profile"),
+                          leading: Icon(Icons.person),
+                          selected: _currentIndex == 2,
+                          tileColor: _currentIndex == 2
+                              ? Color.fromARGB(255, 61, 124, 251)
+                              : null,
+                          onTap: () {
+                            _navigateToPage(2);
+                          },
+                        ),
+                        ListTile(
+                          title: Text(
+                            "Employee",
+                            style: TextStyle(fontSize: 14),
                           ),
-                          ListTile(
-                            title: Text("Settings"),
-                            leading: Icon(Icons.settings),
-                            selected: _currentIndex == 1,
-                            tileColor: _currentIndex == 1
-                                ? Color.fromARGB(255, 61, 124, 251)
-                                : null,
-                            onTap: () {
-                              _navigateToPage(1);
-                            },
-                          ),
-                          ListTile(
-                            title: Text("Profile"),
-                            leading: Icon(Icons.person),
-                            selected: _currentIndex == 2,
-                            tileColor: _currentIndex == 2
-                                ? Color.fromARGB(255, 61, 124, 251)
-                                : null,
-                            onTap: () {
-                              _navigateToPage(2);
-                            },
-                          ),
+                          leading: Icon(Icons.person),
+                          onTap: () {
+                            _toggleEmployeeOptions();
+                          },
+                        ),
+                        if (_showAddEmployeeOptions) ...[
                           ListTile(
                             title: Text(
-                              "Employee",
-                              style: TextStyle(fontSize: 14),
+                              "Add Employee",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                // color: _isEditEmployeeActive ? Colors.green : null,
+                              ),
                             ),
-                            leading: Icon(Icons.person),
+                            leading: Icon(Icons.person_add),
+                            dense: true,
+                            selected: _currentIndex == 3,
+                            tileColor: _currentIndex == 3
+                                ? Color.fromARGB(255, 61, 124, 251)
+                                : null,
+                            contentPadding: const EdgeInsets.only(left: 40.0),
                             onTap: () {
-                              _toggleEmployeeOptions();
+                              _toggleAddEmployeeActive();
+                              _navigateToPage(3);
                             },
                           ),
-                          if (_showAddEmployeeOptions) ...[
-                            ListTile(
-                              title: Text(
-                                "Add Employee",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  // color: _isEditEmployeeActive ? Colors.green : null,
-                                ),
-                              ),
-                              leading: Icon(Icons.person_add),
-                              dense: true,
-                              selected: _currentIndex == 3,
-                              tileColor: _currentIndex == 3
-                                  ? Color.fromARGB(255, 61, 124, 251)
-                                  : null,
-                              contentPadding: const EdgeInsets.only(left: 40.0),
-                              onTap: () {
-                                _toggleAddEmployeeActive();
-                                _navigateToPage(3);
-                              },
+                          // ListTile(
+                          //   title: Text(
+                          //     "Edit Employee",
+                          //     style: TextStyle(fontSize: 12),
+                          //   ),
+                          //   leading: Icon(Icons.edit),
+                          //   dense: true,
+                          //   contentPadding: const EdgeInsets.only(left: 40.0),
+                          //   selected: _currentIndex == 4,
+                          //   tileColor: _currentIndex == 4
+                          //       ? Color.fromARGB(255, 61, 124, 251)
+                          //       : null,
+                          //   onTap: () {
+                          //     _toggleEditEmployeeActive();
+                          //     _navigateToPage(4);
+                          //   },
+                          // ),
+                          ListTile(
+                            title: Text(
+                              "Employee List",
+                              style: TextStyle(fontSize: 12),
                             ),
-                            ListTile(
-                              title: Text(
-                                "Edit Employee",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              leading: Icon(Icons.edit),
-                              dense: true,
-                              contentPadding: const EdgeInsets.only(left: 40.0),
-                              selected: _currentIndex == 4,
-                              tileColor: _currentIndex == 4
-                                  ? Color.fromARGB(255, 61, 124, 251)
-                                  : null,
-                              onTap: () {
-                                _toggleEditEmployeeActive();
-                                _navigateToPage(4);
-                              },
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Employee List",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              leading: Icon(Icons.person_search),
-                              dense: true,
-                              contentPadding: const EdgeInsets.only(left: 40.0),
-                              selected: _currentIndex == 5,
-                              tileColor: _currentIndex == 5
-                                  ? Color.fromARGB(255, 61, 124, 251)
-                                  : null,
-                              onTap: () {
-                                _toggleEmployeeListActive();
-                                _navigateToPage(5);
-                              },
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Employee Profile",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              leading: Icon(Icons.person),
-                              dense: true,
-                              contentPadding: const EdgeInsets.only(left: 40.0),
-                              selected: _currentIndex == 6,
-                              tileColor: _currentIndex == 6
-                                  ? Color.fromARGB(255, 61, 124, 251)
-                                  : null,
-                              onTap: () {
-                                _toggleEmployeeProfileActive();
-                                _navigateToPage(6);
-                              },
-                            ),
-                          ],
+                            leading: Icon(Icons.person_search),
+                            dense: true,
+                            contentPadding: const EdgeInsets.only(left: 40.0),
+                            selected: _currentIndex == 4,
+                            tileColor: _currentIndex == 4
+                                ? Color.fromARGB(255, 61, 124, 251)
+                                : null,
+                            onTap: () {
+                              _toggleEmployeeListActive();
+                              _navigateToPage(4);
+                            },
+                          ),
+                          // ListTile(
+                          //   title: Text(
+                          //     "Employee Profile",
+                          //     style: TextStyle(fontSize: 12),
+                          //   ),
+                          //   leading: Icon(Icons.person),
+                          //   dense: true,
+                          //   contentPadding: const EdgeInsets.only(left: 40.0),
+                          //   selected: _currentIndex == 6,
+                          //   tileColor: _currentIndex == 6
+                          //       ? Color.fromARGB(255, 61, 124, 251)
+                          //       : null,
+                          //   onTap: () {
+                          //     _toggleEmployeeProfileActive();
+                          //     _navigateToPage(6);
+                          //   },
+                          // ),
                         ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: _isSidebarVisible ? 7 : 9,
-                child: PageView(
-                  controller: _pageController,
-                  children: _pages,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
+                SizedBox(
+                  height: size.height,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AppBar(
+                        leading: IconButton(
+                          icon: Icon(Icons.menu, color: Colors.white),
+                          onPressed: () {
+                            setState(() {
+                              _isSidebarVisible = !_isSidebarVisible;
+                            });
+                          },
+                        ),
+
+                        title: Text(_currentIndex == 0
+                            ? ""
+                            : _currentIndex == 1
+                                ? ""
+                                : ""),
+                        // elevation: 0,
+                        backgroundColor: Color.fromARGB(255, 61, 124, 251),
+                        actions: [
+                          Row(
+                            children: [
+                              Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                    // border: Border.all(),
+                                    color: Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: IconButton(
+                                  icon: Icon(Icons.person),
+                                  onPressed: () {},
+                                ),
+                              ),
+                              SizedBox(
+                                width: 30,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height - 60,
+                        child: PageView(
+                          controller: _pageController,
+                          children: _pages,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -299,7 +347,7 @@ class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, "Home Content"),
+      // appBar: buildAppBar(context, "Home Content"),
       body: Container(
         child: Center(
           child: Text("Home Content"),
@@ -313,7 +361,7 @@ class SettingsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context, "Settings Content"),
+      // appBar: buildAppBar(context, "Settings Content"),
       body: Container(
         child: Center(
           child: Text("Settings Content"),
@@ -323,40 +371,40 @@ class SettingsContent extends StatelessWidget {
   }
 }
 
-AppBar buildAppBar(BuildContext context, String title) {
-  return AppBar(
-    leading: IconButton(
-      icon: Icon(Icons.menu, color: Colors.white),
-      onPressed: () {
-        // setState(() {
-        //   _isSidebarVisible = !_isSidebarVisible;
-        // });
-      },
-    ),
+// AppBar buildAppBar(BuildContext context, String title) {
+//   return AppBar(
+//     leading: IconButton(
+//       icon: Icon(Icons.menu, color: Colors.white),
+//       onPressed: () {
+//         setState(() {
+//           _isSidebarVisible = !_isSidebarVisible;
+//         });
+//       },
+//     ),
 
-    title: Text(title),
-    // elevation: 0,
-    backgroundColor: Color.fromARGB(255, 61, 124, 251),
-    actions: [
-      Row(
-        children: [
-          Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                // border: Border.all(),
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(20)),
-            child: IconButton(
-              icon: Icon(Icons.person),
-              onPressed: () {},
-            ),
-          ),
-          SizedBox(
-            width: 30,
-          ),
-        ],
-      ),
-    ],
-  );
-}
+//     title: Text(title),
+//     // elevation: 0,
+//     backgroundColor: Color.fromARGB(255, 61, 124, 251),
+//     actions: [
+//       Row(
+//         children: [
+//           Container(
+//             height: 40,
+//             width: 40,
+//             decoration: BoxDecoration(
+//                 // border: Border.all(),
+//                 color: Colors.grey[100],
+//                 borderRadius: BorderRadius.circular(20)),
+//             child: IconButton(
+//               icon: Icon(Icons.person),
+//               onPressed: () {},
+//             ),
+//           ),
+//           SizedBox(
+//             width: 30,
+//           ),
+//         ],
+//       ),
+//     ],
+//   );
+// }
