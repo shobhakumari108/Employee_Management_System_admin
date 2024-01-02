@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 // import 'package:employee_management_ad/model/userdata.dart';
 
 class EmployeeService {
-  static const String apiUrl = "http://192.168.29.77:2000/app/users/addUser";
+  static const String apiUrl = "http://192.168.29.135:2000/app/users/addUser";
 
   static Future<bool> addEmployee(UserData user) async {
     var headers = {
@@ -44,58 +44,15 @@ class EmployeeService {
 
   //--------------------------------------------
 
-//   //===========employee list
-//    // Replace with your API URL
-
-  // static Future<List<UserData>> getEmployees() async {
-  //   try {
-  //     var headers = {
-  //       'Content-Type': 'application/json',
-  //       // 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRGF0YSI6eyJ1c2VybmFtZSI6IlNvYmhhIiwiZW1haWwiOiJTazEyM0BnbWFpbC5jb20iLCJpZCI6IjY1OGFjN2EyZWYzODE5Y2M0YWM2MGE3ZCIsImZpcnN0TmFtZSI6IlNvYmhhIiwibGFzdE5hbWUiOiJLdW1hcmkifSwiaWF0IjoxNzAzOTEzMDg3LCJleHAiOjE3MDQzNDUwODd9.MgFDmIudXWDHy065SB6BWRkFg94I8uszutfk9hf9RWY'
-  //     };
-
-  //     var request = http.Request(
-  //         'GET', Uri.parse('http://192.168.29.77:2000/app/users/getUsers'));
-  //     request.headers.addAll(headers);
-
-  //     http.StreamedResponse response = await request.send();
-
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       final dynamic jsonData =
-  //           json.decode(await response.stream.bytesToString());
-
-  //       if (jsonData is Map<String, dynamic> && jsonData.containsKey('data')) {
-  //         // Extract the 'data' list from the response
-  //         final List<dynamic>? userDataList = jsonData['data'];
-
-  //         if (userDataList != null) {
-  //           // Map the 'userDataList' to UserData objects
-  //           return userDataList.map((json) => UserData.fromJson(json)).toList();
-  //         } else {
-  //           throw Exception("Data is null in the response");
-  //         }
-  //       } else {
-  //         throw Exception("Unexpected JSON structure: $jsonData");
-  //       }
-  //     } else {
-  //       throw Exception(
-  //           'Failed to load employees. Status code: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     print('Error loading employees: $e');
-  //     throw e; // Rethrow the exception to handle it in the calling code
-  //   }
-  // }
-
 //   //======================================
 
   static const String getEmployeeUrl =
-      "http://192.168.29.77:2000/app/users/getUsers";
+      "http://192.168.29.135:2000/app/users/getUsers";
   static Future<List<UserData>> getEmployees() async {
     try {
       final response = await http.get(Uri.parse(getEmployeeUrl));
 
-      if (response.statusCode == 200 || response.statusCode == 20) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final dynamic responseData = jsonDecode(response.body);
         print(responseData);
 
@@ -127,17 +84,17 @@ class EmployeeService {
   static Future<bool> updateEmployee(UserData employee) async {
     try {
       String updateEmployeeUrl =
-          "http://192.168.29.77:2000/app/users/updateUser/${employee.sId}";
+          "http://192.168.29.135:2000/app/users/updateUser/${employee.sId}";
 
       var request = http.MultipartRequest('PUT', Uri.parse(updateEmployeeUrl))
         ..fields['FirstName'] = employee.firstName ?? ''
         ..fields['LastName'] = employee.lastName ?? ''
         ..fields['Email'] = employee.email ?? ''
-        ..fields['PhoneNumber'] = employee.mobileNumber ?? ''
-        ..fields['jobType'] = employee.jobTitle ?? ''
+        ..fields['MoblieNumber'] = employee.mobileNumber ?? ''
+        ..fields['JobTitle'] = employee.jobTitle ?? ''
         ..fields['ComapnyEmplyeeID'] = employee.companyEmployeeID ?? ''
         ..fields['ManagerId'] = employee.managerID ?? ''
-        ..fields['JobTitlee'] = employee.jobTitle ?? ''
+        // ..fields['JobTitlee'] = employee.jobTitle ?? ''
         ..fields['CompanyName'] = employee.companyName ?? ''
         ..fields['Address'] = employee.address ?? ''
         ..fields['Department'] = employee.department ?? ''
@@ -145,7 +102,9 @@ class EmployeeService {
         ..fields['EmploymentStatus'] = employee.employmentStatus ?? ''
         ..fields['WorkSedule'] = employee.workSchedule ?? '';
       // ..fields['joiningDate'] = employee.joiningDate ?? '';
-
+      print("++++++++++++++++++++++++++++++++++++++++");
+      print(
+          "1${employee.firstName},2${employee.lastName},3${employee.email},4${employee.mobileNumber},5${employee.jobTitle},8${employee.companyName},9${employee.address},10${employee.department},11${employee.education},12${employee.employmentStatus},13${employee.workSchedule}");
       if (employee.profilePhoto != null && employee.profilePhoto!.isNotEmpty) {
         var file = File(employee.profilePhoto!);
         var stream = http.ByteStream(file.openRead());

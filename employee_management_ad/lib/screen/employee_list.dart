@@ -17,11 +17,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   TextEditingController _searchController = TextEditingController();
   List<UserData> _employees = [];
   List<UserData> _filteredEmployees = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _loadEmployees();
+    _isLoading = false;
     print("---");
   }
 
@@ -80,7 +82,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     print("==========");
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: buildAppBar(context, "Profile Screen"),
+      // appBar: buildAppBar(context, "Profile Screen"),
       // appBar: AppBar(
       //   title: Text('Employee List'),
       //   leading: IconButton(
@@ -99,12 +101,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.only(right: 100, left: 20, top: 20),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 10,
-                ),
+                // SizedBox(
+                //   height: 20,
+                // ),
                 Container(
                   width: size.width,
                   child: TextField(
@@ -120,35 +123,43 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-                Column(
-                  children: _filteredEmployees.map((employee) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EmployeeProfileScreen(employee: employee),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        elevation: 5,
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            radius: 30,
-                            backgroundImage:
-                                NetworkImage(employee.profilePhoto ?? ''),
-                          ),
-                          title: Text(
-                              '${employee.firstName ?? ""} ${employee.lastName ?? ""}'),
-                          subtitle: Text('Email: ${employee.email ?? ""}'),
-                        ),
+                _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(color: Colors.black,),
+                      )
+                    : Column(
+                        children: _filteredEmployees.map((employee) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EmployeeProfileScreen(employee: employee),
+                                ),
+                              );
+                            },
+                            child: SizedBox(
+                              width: size.width,
+                              child: Card(
+                                elevation: 5,
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    // radius: 30,
+                                    backgroundImage: NetworkImage(
+                                        employee.profilePhoto ?? ''),
+                                  ),
+                                  title: Text(
+                                      '${employee.firstName ?? ""} ${employee.lastName ?? ""}'),
+                                  subtitle:
+                                      Text('Email: ${employee.email ?? ""}'),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }).toList(),
-                ),
               ],
             ),
           ),

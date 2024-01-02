@@ -20,7 +20,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: buildAppBar(context, "Edit Employee"),
+      // appBar: buildAppBar(context, "Edit Employee"),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -71,7 +71,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                 ),
                 SizedBox(height: 40),
                 SizedBox(
-                    width: size.width,
+                    width: size.width/3,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () async {
