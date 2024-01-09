@@ -101,66 +101,87 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.only(right: 100, left: 20, top: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // SizedBox(
-                //   height: 20,
-                // ),
-                Container(
-                  width: size.width,
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: _searchEmployees,
-                    decoration: InputDecoration(
-                      labelText: 'Search',
-                      hintText: 'Enter search query',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.zero,
+            padding: const EdgeInsets.only(right: 20, left: 20, top: 20),
+            child: Center(
+              child: Column(
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
+                  Container(
+                    width: size.width * .5,
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: _searchEmployees,
+                      decoration: InputDecoration(
+                        labelText: 'Search',
+                        hintText: 'Enter search query',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.zero,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 20),
-                _isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(color: Colors.black,),
-                      )
-                    : Column(
-                        children: _filteredEmployees.map((employee) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      EmployeeProfileScreen(employee: employee),
-                                ),
-                              );
-                            },
-                            child: SizedBox(
-                              width: size.width,
-                              child: Card(
-                                elevation: 5,
-                                margin: EdgeInsets.symmetric(vertical: 10),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    // radius: 30,
-                                    backgroundImage: NetworkImage(
-                                        employee.profilePhoto ?? ''),
+                  SizedBox(height: 20),
+                  _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : Column(
+                          children: _filteredEmployees.map((employee) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EmployeeProfileScreen(
+                                        employee: employee),
                                   ),
-                                  title: Text(
-                                      '${employee.firstName ?? ""} ${employee.lastName ?? ""}'),
-                                  subtitle:
-                                      Text('Email: ${employee.email ?? ""}'),
+                                );
+                              },
+                              child: SizedBox(
+                                width: size.width * .5,
+                                child: Card(
+                                  elevation: 5,
+                                  margin: EdgeInsets.symmetric(vertical: 10),
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      radius: 30,
+                                      backgroundColor: Colors.blue[
+                                          100], // Set background color for the CircleAvatar
+                                      child:
+                                          employee.profilePhoto?.isNotEmpty ==
+                                                  true
+                                              ? ClipOval(
+                                                  child: Image.network(
+                                                    employee.profilePhoto!,
+                                                    width: 50,
+                                                    height: 50,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )
+                                              : Icon(
+                                                  Icons.person,
+                                                  size: 30,
+                                                  color: Color.fromARGB(
+                                                      255, 61, 124, 251),
+                                                ),
+                                    ),
+                                    title: Text(
+                                        '${employee.firstName ?? ""} ${employee.lastName ?? ""}'),
+                                    subtitle:
+                                        Text('Email: ${employee.email ?? ""}'),
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-              ],
+                            );
+                          }).toList(),
+                        ),
+                ],
+              ),
             ),
           ),
         ),

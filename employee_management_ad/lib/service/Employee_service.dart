@@ -7,7 +7,8 @@ import 'package:http/http.dart' as http;
 // import 'package:employee_management_ad/model/userdata.dart';
 
 class EmployeeService {
-  static const String apiUrl = "http://192.168.29.135:2000/app/users/addUser";
+  static const String apiUrl =
+      "https://employee-management-u6y6.onrender.com/app/users/addUser";
 
   static Future<bool> addEmployee(UserData user) async {
     var headers = {
@@ -28,12 +29,12 @@ class EmployeeService {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print("================Sign-up successful====================");
+      print("================added successful====================");
       print(await response.body);
       showToast("Employee added successfully", Colors.black);
       return true; // Employee added successfully
     } else {
-      print("================Sign-up failed====================");
+      print("================failed to add employee====================");
       print(response.reasonPhrase);
       showToast("Failed to add employee", Colors.red);
 
@@ -47,7 +48,7 @@ class EmployeeService {
 //   //======================================
 
   static const String getEmployeeUrl =
-      "http://192.168.29.135:2000/app/users/getUsers";
+      "https://employee-management-u6y6.onrender.com/app/users/getUsers";
   static Future<List<UserData>> getEmployees() async {
     try {
       final response = await http.get(Uri.parse(getEmployeeUrl));
@@ -84,7 +85,7 @@ class EmployeeService {
   static Future<bool> updateEmployee(UserData employee) async {
     try {
       String updateEmployeeUrl =
-          "http://192.168.29.135:2000/app/users/updateUser/${employee.sId}";
+          "https://employee-management-u6y6.onrender.com/app/users/updateUser/${employee.sId}";
 
       var request = http.MultipartRequest('PUT', Uri.parse(updateEmployeeUrl))
         ..fields['FirstName'] = employee.firstName ?? ''
@@ -100,21 +101,13 @@ class EmployeeService {
         ..fields['Department'] = employee.department ?? ''
         ..fields['Education'] = employee.education ?? ''
         ..fields['EmploymentStatus'] = employee.employmentStatus ?? ''
-        ..fields['WorkSedule'] = employee.workSchedule ?? '';
-      // ..fields['joiningDate'] = employee.joiningDate ?? '';
+        ..fields['WorkSedule'] = employee.workSchedule ?? ''
+        ..fields['joiningDate'] = employee.joiningDate?.toIso8601String() ?? ''
+        ..fields['Salary'] = employee.salary ?? '';
+
       print("++++++++++++++++++++++++++++++++++++++++");
       print(
           "1${employee.firstName},2${employee.lastName},3${employee.email},4${employee.mobileNumber},5${employee.jobTitle},8${employee.companyName},9${employee.address},10${employee.department},11${employee.education},12${employee.employmentStatus},13${employee.workSchedule}");
-      if (employee.profilePhoto != null && employee.profilePhoto!.isNotEmpty) {
-        var file = File(employee.profilePhoto!);
-        var stream = http.ByteStream(file.openRead());
-        var length = await file.length();
-
-        var multipartFile = http.MultipartFile('ProfilePicture', stream, length,
-            filename: file.path.split("/").last);
-
-        request.files.add(multipartFile);
-      }
 
       var response = await http.Response.fromStream(await request.send());
 
