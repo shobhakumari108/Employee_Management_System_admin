@@ -1,10 +1,7 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields
-
+import 'package:flutter/material.dart';
 import 'package:employee_management_ad/model/userdata.dart';
 import 'package:employee_management_ad/screen/employee_profile_screen.dart';
-import 'package:employee_management_ad/screen/home.dart';
 import 'package:employee_management_ad/service/Employee_service.dart';
-import 'package:flutter/material.dart';
 
 class EmployeeScreen extends StatefulWidget {
   const EmployeeScreen({Key? key}) : super(key: key);
@@ -23,7 +20,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   void initState() {
     super.initState();
     _loadEmployees();
-    _isLoading = false;
     print("---");
   }
 
@@ -34,9 +30,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       setState(() {
         _employees = employees;
         _filteredEmployees = employees;
+        _isLoading = false; // Set isLoading to false after data is loaded
       });
     } catch (e) {
       print("Error loading employees: $e");
+      setState(() {
+        _isLoading = false; // Set isLoading to false in case of error
+      });
     }
   }
 
@@ -104,11 +104,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
             padding: const EdgeInsets.only(right: 20, left: 20, top: 20),
             child: Center(
               child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
                   Container(
                     width: size.width * .5,
                     child: TextField(
@@ -125,35 +121,38 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   ),
                   SizedBox(height: 20),
                   _isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
+                      ? CircularProgressIndicator(
+                           valueColor: AlwaysStoppedAnimation<Color>(
+                            Color.fromARGB(255, 61, 124, 251),
                           ),
                         )
-                      : Column(
-                          children: _filteredEmployees.map((employee) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EmployeeProfileScreen(
-                                        employee: employee),
-                                  ),
-                                );
-                              },
-                              child: SizedBox(
-                                width: size.width * .5,
-                                child: Card(
-                                  elevation: 5,
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      radius: 30,
-                                      backgroundColor: Colors.blue[
-                                          100], // Set background color for the CircleAvatar
-                                      child:
-                                          employee.profilePhoto?.isNotEmpty ==
+                      : Stack(
+                          children: [
+                            Column(
+                              children: _filteredEmployees.map((employee) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            EmployeeProfileScreen(
+                                                employee: employee),
+                                      ),
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: size.width * .5,
+                                    child: Card(
+                                      elevation: 5,
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 10),
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          radius: 30,
+                                          backgroundColor: Colors.blue[100],
+                                          child: employee.profilePhoto
+                                                      ?.isNotEmpty ==
                                                   true
                                               ? ClipOval(
                                                   child: Image.network(
@@ -169,16 +168,22 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                                   color: Color.fromARGB(
                                                       255, 61, 124, 251),
                                                 ),
+                                        ),
+                                        title: Text(
+                                            '${employee.firstName ?? ""} ${employee.lastName ?? ""}'),
+                                        subtitle: Text(
+                                            'Email: ${employee.email ?? ""}'),
+                                      ),
                                     ),
-                                    title: Text(
-                                        '${employee.firstName ?? ""} ${employee.lastName ?? ""}'),
-                                    subtitle:
-                                        Text('Email: ${employee.email ?? ""}'),
                                   ),
-                                ),
+                                );
+                              }).toList(),
+                            ),
+                            if (_filteredEmployees.isEmpty)
+                              Center(
+                                child: Text('No employees found'),
                               ),
-                            );
-                          }).toList(),
+                          ],
                         ),
                 ],
               ),

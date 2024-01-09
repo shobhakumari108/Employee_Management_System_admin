@@ -3,22 +3,25 @@ import 'package:employee_management_ad/model/userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+// ... (your imports)
+
 class AttendanceScreen extends StatefulWidget {
   final UserData employee;
 
-  const AttendanceScreen({super.key, required this.employee});
+  const AttendanceScreen({Key? key, required this.employee});
 
   @override
   _AttendanceScreenState createState() => _AttendanceScreenState();
 }
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
-  List<dynamic> attendanceData = [];
+  late Future<void> _fetchData;
+  List<dynamic> _attendanceData = [];
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    _fetchData = fetchData();
   }
 
   Future<void> fetchData() async {
@@ -33,7 +36,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         if (jsonResponse['success'] == true) {
           setState(() {
-            attendanceData = jsonResponse['data'];
+            _attendanceData = jsonResponse['data'];
           });
         } else {
           print('API Error: ${jsonResponse['message']}');
@@ -58,9 +61,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.white,
-              // leading: const Icon(
-              //   Icons.arrow_back_rounded,
-              // ),
               title: Card(
                 color: Colors.blueGrey[100],
                 child: Row(
@@ -85,100 +85,135 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 ),
               ),
             ),
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var monthData in attendanceData)
-                    Column(
+            body: FutureBuilder(
+              future: _fetchData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                       valueColor: AlwaysStoppedAnimation<Color>(
+                        Color.fromARGB(255, 61, 124, 251),
+                      ),
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else {
+                  if (_attendanceData.isEmpty) {
+                    return Center(
+                      child: Text('No attendance data available.'),
+                    );
+                  }
+
+                  return SingleChildScrollView(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '${monthData['monthYear']}',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 30),
-                          ),
-                        ),
-                        for (var attendance
-                            in (monthData['data'] as List<dynamic>))
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Container(
-                                width: size.width * .6 + 42,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        child: Row(
+                        for (var monthData in _attendanceData)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  '${monthData['monthYear']}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 30),
+                                ),
+                              ),
+                              for (var attendance
+                                  in (monthData['data'] as List<dynamic>))
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Container(
+                                      width: size.width * .6 + 42,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.center,
                                           children: [
-                                            Row(
-                                              children: [
-                                                if (attendance['Photo']
-                                                    .isNotEmpty)
-                                                  if (attendance['Photo']
-                                                      .isNotEmpty)
-                                                    CircleAvatar(
-                                                      radius: 25,
-                                                      backgroundImage:
-                                                          NetworkImage(
-                                                        attendance['Photo'],
+                                            SizedBox(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      if (attendance['Photo']
+                                                          .isNotEmpty)
+                                                        if (attendance['Photo']
+                                                            .isNotEmpty)
+                                                          CircleAvatar(
+                                                            radius: 25,
+                                                            backgroundImage:
+                                                                NetworkImage(
+                                                              attendance[
+                                                                  'Photo'],
+                                                            ),
+                                                          ),
+                                                      SizedBox(
+                                                        width: 10,
                                                       ),
-                                                    ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                        'Date: ${attendance['attendenceDate']}'),
-                                                    Text(
-                                                      'Time: ${attendance['ClockInDateTime']}',
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            Text(
-                                              '${attendance['Status']}',
-                                              style: TextStyle(
-                                                  color: statusColor(
-                                                      attendance['Status']),
-                                                  fontWeight: FontWeight.bold),
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                              'Date: ${attendance['attendenceDate']}'),
+                                                          Text(
+                                                            'Time: ${attendance['ClockInDateTime']}',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Text(
+                                                    '${attendance['Status']}',
+                                                    style: TextStyle(
+                                                        color: statusColor(
+                                                            attendance[
+                                                                'Status']),
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                            ],
                           ),
                       ],
                     ),
-                ],
-              ),
+                  );
+                }
+              },
             ),
           ),
         ),

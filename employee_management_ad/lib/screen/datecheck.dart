@@ -18,7 +18,11 @@ class MyApp extends StatelessWidget {
           future: fetchData(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return CircularProgressIndicator(
+                 valueColor: AlwaysStoppedAnimation<Color>(
+                  Color.fromARGB(255, 61, 124, 251),
+                ),
+              );
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {

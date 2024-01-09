@@ -102,7 +102,7 @@ class EmployeeService {
         ..fields['Education'] = employee.education ?? ''
         ..fields['EmploymentStatus'] = employee.employmentStatus ?? ''
         ..fields['WorkSedule'] = employee.workSchedule ?? ''
-        ..fields['joiningDate'] = employee.joiningDate?.toIso8601String() ?? ''
+        ..fields['JoiningDate'] = employee.joiningDate?.toIso8601String() ?? ''
         ..fields['Salary'] = employee.salary ?? '';
 
       print("++++++++++++++++++++++++++++++++++++++++");

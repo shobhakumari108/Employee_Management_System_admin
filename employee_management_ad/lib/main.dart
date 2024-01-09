@@ -25,12 +25,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        // home: HomeScreen(),
-        // home: SignupScreen(),
-        // home: LoginScreen(),
-        home: HomeScreen()
-        // home: TaskScreen(employee: UserData()),
-        );
+      debugShowCheckedModeBanner: false,
+      // home: HomeScreen(),
+      // home: SignupScreen(),
+      home: LoginScreen(),
+      // home: HomeScreen()
+      // home: TaskScreen(employee: UserData()),
+    );
   }
 }

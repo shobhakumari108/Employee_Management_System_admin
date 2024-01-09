@@ -300,7 +300,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
                                                   height: 150,
                                                   fit: BoxFit.cover,
                                                 )
-                                              :const Icon(
+                                              : const Icon(
                                                   Icons.person,
                                                   size: 50,
                                                   color: Color.fromARGB(
@@ -359,11 +359,11 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
                                       const SizedBox(
                                         height: 5,
                                       ),
-                                      // Text(
-                                      //     'Joining date : ${widget.employee.}'),
-                                      // const SizedBox(
-                                      //   height: 5,
-                                      // ),
+                                      Text(
+                                          'Joining date : ${widget.employee.joiningDate}'),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
                                       Text(
                                         'Company name : ${widget.employee.companyName}',
                                       ),
@@ -428,7 +428,11 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return CircularProgressIndicator();
+                                  return CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color.fromARGB(255, 61, 124, 251),
+                                    ),
+                                  );
                                 } else if (snapshot.hasError) {
                                   return Text('Error: ${snapshot.error}');
                                 } else {

@@ -69,7 +69,7 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
     _phoneController.text = widget.employee.mobileNumber ?? '';
     _jobTypeController.text = widget.employee.jobTitle ?? '';
     _joiningDateController.text =
-        widget.employee.joiningDate?.toIso8601String() ?? '';
+      widget.employee.joiningDate?.toIso8601String() ?? '';
 
     _companyNameController.text = widget.employee.companyName ?? '';
     _addressController.text = widget.employee.address ?? '';
@@ -204,7 +204,7 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
                     const Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(5.0),
+                          padding:  EdgeInsets.all(5.0),
                           child: Text(
                             "Edit Profile",
                             style: TextStyle(
@@ -228,7 +228,7 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
                   children: [
                     // Photo selection
 
-                    SizedBox(
+                   const SizedBox(
                       height: 40,
                     ),
                     // GestureDetector(
@@ -718,7 +718,7 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
                         Container(
                           width: size.width * .6 + 20,
                           height: 50,
-                          color: Color.fromARGB(255, 240, 239, 239),
+                          color:const Color.fromARGB(255, 240, 239, 239),
                           child: Row(
                             children: [
                               Expanded(
@@ -764,8 +764,12 @@ class _EmployeeEditScreenState extends State<EmployeeEditScreen> {
                               primary: const Color.fromARGB(255, 61, 124, 251),
                             ),
                             child: _isUpdating
-                                ? CircularProgressIndicator() // Show loading indicator
-                                : Text(
+                                ?const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color.fromARGB(255, 61, 124, 251),
+                                    ),
+                                ) // Show loading indicator
+                                : const Text(
                                     'Save',
                                     style: TextStyle(
                                       fontSize: 20,

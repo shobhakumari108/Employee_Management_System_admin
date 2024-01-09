@@ -106,6 +106,10 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                             });
 
                             if (addEmployeeSuccess) {
+                              _controllerFirstName.clear();
+                              _controllerLastName.clear();
+                              _controllerEmail.clear();
+                              _controllerPassword.clear();
                               // Handle success, e.g., show a success message or navigate to another screen
                               print("Employee added successfully");
                             } else {
@@ -122,8 +126,8 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                     ),
                     child: _isLoading
                         ? CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                             valueColor: AlwaysStoppedAnimation<Color>(
+                              Color.fromARGB(255, 61, 124, 251),
                             ),
                           )
                         : Text(

@@ -4,24 +4,6 @@ import 'package:employee_management_ad/widgets/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('Post Holiday Data'),
-//         ),
-//         body: PostHolidayForm(),
-//       ),
-//     );
-//   }
-// }
-
 class HolidayScreen extends StatefulWidget {
   @override
   _HolidayScreenState createState() => _HolidayScreenState();
@@ -32,6 +14,7 @@ class _HolidayScreenState extends State<HolidayScreen> {
   DateTime selectedDate = DateTime.now();
   String responseMessage = '';
   late FocusNode holidayFocusNode;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -59,9 +42,15 @@ class _HolidayScreenState extends State<HolidayScreen> {
   }
 
   Future<void> postHolidayData() async {
+    setState(() {
+      _loading = true;
+    });
+
     var headers = {'Content-Type': 'application/json'};
     var request = http.Request(
-        'POST', Uri.parse('https://employee-management-u6y6.onrender.com/app/holiday/addHoliday'));
+        'POST',
+        Uri.parse(
+            'https://employee-management-u6y6.onrender.com/app/holiday/addHoliday'));
 
     // Format the date without the time component
     String formattedDate =
@@ -75,20 +64,13 @@ class _HolidayScreenState extends State<HolidayScreen> {
 
     http.StreamedResponse response = await request.send();
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // print(response.body);
-      print("================");
-      // setState(() {
-      //   responseMessage = 'Holiday data posted successfully';
-      // });
+    setState(() {
+      _loading = false;
+    });
 
+    if (response.statusCode == 200 || response.statusCode == 201) {
       showToast("'Holiday data posted successfully'", Colors.green);
     } else {
-      // setState(() {
-      //   responseMessage =
-      //       'Failed to post holiday data: ${response.reasonPhrase}';
-      // });
-
       showToast(
           "Failed to post holiday data: ${response.reasonPhrase}", Colors.red);
     }
@@ -120,7 +102,6 @@ class _HolidayScreenState extends State<HolidayScreen> {
               controller: holidayController,
               hintText: 'Holiday',
               icon: Icons.lock,
-              // focusNode: holidayFocusNode,
             ),
           ),
           const SizedBox(height: 16.0),
@@ -131,8 +112,7 @@ class _HolidayScreenState extends State<HolidayScreen> {
             child: TextFormField(
               readOnly: true,
               controller: TextEditingController(
-                text:
-                    '${selectedDate.toLocal().toString().split(' ')[0]}', // Display only the date
+                text: '${selectedDate.toLocal().toString().split(' ')[0]}',
               ),
               decoration: InputDecoration(
                 isDense: true,
@@ -142,7 +122,6 @@ class _HolidayScreenState extends State<HolidayScreen> {
                 errorBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
                 contentPadding: EdgeInsets.all(16),
-                // labelText: 'Holiday Date',
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () => _selectDate(context),
@@ -155,24 +134,27 @@ class _HolidayScreenState extends State<HolidayScreen> {
             width: size.width / 3,
             height: 50,
             child: ElevatedButton(
-              onPressed: () {
-                postHolidayData();
-              },
+              onPressed: _loading ? null : postHolidayData,
               style: ElevatedButton.styleFrom(
                 primary: const Color.fromARGB(255, 61, 124, 251),
               ),
-              child: Text(
-                'Send',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+              child: _loading
+                  ? CircularProgressIndicator(
+                       valueColor: AlwaysStoppedAnimation<Color>(
+                        Color.fromARGB(255, 61, 124, 251),
+                      ),
+                    )
+                  : Text(
+                      'Send',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
           const SizedBox(height: 16.0),
-          // Text(responseMessage),
         ],
       ),
     );
